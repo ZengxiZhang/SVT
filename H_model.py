@@ -157,7 +157,7 @@ class Get_Flow(nn.Module):
         four_point_new = four_point_org + four_point
         # print(four_point_org)
         # print(four_point_new)
-        # time.sleep(1000)
+        # time.sleep(1000) 
         four_point_org = four_point_org.flatten(2).permute(0, 2, 1)
         four_point_new = four_point_new.flatten(2).permute(0, 2, 1)
         # H = tgm.get_perspective_transform(four_point_org, four_point_new)
@@ -765,10 +765,11 @@ class H_estimator(torch.nn.Module):
         # print(net3_f.shape)
         # print(feature1_1.shape,net3_f.shape)
         # print(ir_input1.shape)
-        flow_tps = F.upsample_bilinear(net3_f, None, [2, 2])
+        flow_tps = F.upsample_bilinear(net3_f, None, [2, 2])*2
         # print(four_point_disp.shape)
         # print(flow_tps.shape)
-        flow_homo_tps =  flow_med_H2 + flow_tps
+		scale = ir_input1.shape[-1]
+        flow_homo_tps =  flow_med_H2 + flow_tps*scale/2
         #######################################################################################################################
         coords0, coords1 = self.initialize_flow_4(ir_input1, 1)
         sz = ir_input1.shape
@@ -900,5 +901,6 @@ class H_joint_out(torch.nn.Module):
         warps_ir = self.transform_output(irs.permute(0,3,1,2), H_mat,size,resized_shift)
         warps_vis = self.transform_output(viss.permute(0,3,1,2), H_mat,size,resized_shift)
         return warps_ir, warps_vis
+
 
 
